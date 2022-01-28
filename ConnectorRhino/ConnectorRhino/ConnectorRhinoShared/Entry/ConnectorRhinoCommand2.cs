@@ -25,23 +25,35 @@ namespace SpeckleRhino
 
     public static SpeckleCommand2 Instance { get; private set; }
 
-    public override string EnglishName => "SpeckleNewUi";
+    public override string EnglishName => "Speckle2Mac";
 
     public static Window MainWindow { get; private set; }
 
-    public static ConnectorBindingsRhino2 Bindings { get; set; } = new ConnectorBindingsRhino2();
+    public static RhinoViewModel Bindings { get; set; } = new RhinoViewModel();
 
     public SpeckleCommand2()
     {
       Instance = this;
     }
 
-    public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
+    public static AppBuilder BuildAvaloniaApp()
+    {
+      //string path = Path.GetDirectoryName(typeof(App).Assembly.Location);
+      string nativeLib = "/Users/alan/.nuget/packages/avalonia.native/0.10.999-cibuild0017846-beta/runtimes/osx/native/libAvaloniaNative.dylib";
+      //Path.Combine(path, "Native", "libAvalonia.Native.OSX.dylib");
+      return AppBuilder.Configure<DesktopUI2.App>()
       .UsePlatformDetect()
+      .With(new X11PlatformOptions { UseGpu = false })
+      .With(new MacOSPlatformOptions { ShowInDock = false, DisableDefaultApplicationMenuItems = true, DisableNativeMenus = true })
+      .With(new AvaloniaNativePlatformOptions
+      {
+        AvaloniaNativeLibraryPath = nativeLib
+      })
       .With(new SkiaOptions { MaxGpuResourceSizeBytes = 8096000 })
       .With(new Win32PlatformOptions { AllowEglInitialization = true, EnableMultitouch = false })
       .LogToTrace()
       .UseReactiveUI();
+    }
 
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
@@ -52,25 +64,33 @@ namespace SpeckleRhino
     public static void CreateOrFocusSpeckle()
     {
       if (MainWindow == null)
-        BuildAvaloniaApp().Start(AppMain, null);
+      {
+        try
+        {
+          BuildAvaloniaApp().Start(AppMain, null);
+        }
+        catch (Exception e)
+        {
+          Console.Write(e);
+        }
+      }
 
       MainWindow.Show();
       MainWindow.Activate();
 
-      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-      {
-        var parentHwnd = RhinoApp.MainWindowHandle();
-        var hwnd = MainWindow.PlatformImpl.Handle.Handle;
-        SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
-      }
+      //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      //{
+      //  var parentHwnd = RhinoApp.MainWindowHandle();
+      //  var hwnd = MainWindow.PlatformImpl.Handle.Handle;
+      //  SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
+      //}
     }
 
     private static void AppMain(Application app, string[] args)
     {
-      var viewModel = new MainWindowViewModel(Bindings);
       MainWindow = new MainWindow
       {
-        DataContext = viewModel
+        DataContext = Bindings
       };
 
       Task.Run(() => app.Run(MainWindow));

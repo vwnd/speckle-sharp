@@ -216,7 +216,7 @@ namespace SpeckleRhino
 
 
       // get commit layer name 
-      var commitLayerName = Speckle.DesktopUI.Utils.Formatting.CommitInfo(state.CachedStream.name, state.BranchName, state.CommitId);
+      var commitLayerName = Formatting.CommitInfo(state.CachedStream.name, state.BranchName, state.CommitId);
 
       // give converter a way to access the base commit layer name
       RhinoDoc.ActiveDoc.Notes += "%%%" + commitLayerName;

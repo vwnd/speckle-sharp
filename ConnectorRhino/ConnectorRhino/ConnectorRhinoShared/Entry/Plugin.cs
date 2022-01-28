@@ -40,9 +40,9 @@ namespace SpeckleRhino
         return;
       }
 
-      var bindings = new ConnectorBindingsRhino();
+      var bindings = new ConnectorBindingsRhino2();
       if (bindings.GetStreamsInFile().Count > 0)
-        SpeckleCommand.Instance.StartOrShowPanel();
+        SpeckleCommand2.CreateOrFocusSpeckle();
     }
 
     private void RhinoDoc_BeginOpenDocument(object sender, DocumentOpenEventArgs e)
