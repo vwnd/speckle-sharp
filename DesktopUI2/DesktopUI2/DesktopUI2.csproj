@@ -128,7 +128,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.999-cibuild0017846-beta" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.999-cibuild0017846-beta" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.999-cibuild0017846-beta" />
-    <PackageReference Include="Material.Avalonia" Version="2.5.0" />
+    <PackageReference Include="Material.Avalonia" Version="2.5.0.72-nightly" />
     <PackageReference Include="Material.Icons.Avalonia" Version="1.0.2" />
   </ItemGroup>
   <ItemGroup>

@@ -78,21 +78,20 @@ namespace SpeckleRhino
       MainWindow.Show();
       MainWindow.Activate();
 
-      //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-      //{
-      //  var parentHwnd = RhinoApp.MainWindowHandle();
-      //  var hwnd = MainWindow.PlatformImpl.Handle.Handle;
-      //  SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
-      //}
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+      {
+        var parentHwnd = RhinoApp.MainWindowHandle();
+        var hwnd = MainWindow.PlatformImpl.Handle.Handle;
+        SetWindowLongPtr(hwnd, GWL_HWNDPARENT, parentHwnd);
+      }
     }
 
     private static void AppMain(Application app, string[] args)
     {
       MainWindow = new MainWindow
       {
-        DataContext = Bindings
+        DataContext = Bindings,
       };
-
       Task.Run(() => app.Run(MainWindow));
     }
   }
