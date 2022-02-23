@@ -24,16 +24,21 @@ namespace ConnectorGrasshopper.Extras
       get
       {
         var tags = base.StateTags;
-        if (Kind != GH_ParamKind.input) return tags;
-        if (Optional)
-        {
-          tags.Add(new OptionalStateTag());
-        }
 
-        if (Detachable)
-          tags.Add(new DetachedStateTag());
-        if (Access == GH_ParamAccess.list)
-          tags.Add(new ListAccesStateTag());
+        if (Kind == GH_ParamKind.input)
+        {
+          if (Optional)
+            tags.Add(new OptionalStateTag());
+          if (Detachable)
+            tags.Add(new DetachedStateTag());
+          if (Access == GH_ParamAccess.list)
+            tags.Add(new ListAccesStateTag());
+        }
+        else if (Kind == GH_ParamKind.output)
+        {
+          if (Detachable)
+            tags.Add(new DetachedStateTag());
+        }
 
         return tags;
       }
@@ -43,7 +48,7 @@ namespace ConnectorGrasshopper.Extras
 
     public override void AppendAdditionalMenuItems(ToolStripDropDown menu)
     {
-      if (Kind != GH_ParamKind.input || Kind != GH_ParamKind.floating)
+      if (Kind != GH_ParamKind.input)
       {
         // Append graft,flatten,etc... options to outputs.
         base.AppendAdditionalMenuItems(menu);
@@ -86,8 +91,7 @@ namespace ConnectorGrasshopper.Extras
 
       base.AppendAdditionalMenuItems(menu);
     }
-
-
+    
     protected new void Menu_AppendExtractParameter(ToolStripDropDown menu) => Menu_AppendItem(menu, "Extract parameter", Menu_ExtractParameterClicked, Recipients.Count == 0);
 
     private void Menu_ExtractParameterClicked(object sender, EventArgs e)
