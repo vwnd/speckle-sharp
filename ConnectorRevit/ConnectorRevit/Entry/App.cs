@@ -27,19 +27,7 @@ namespace Speckle.ConnectorRevit.Entry
 
       var specklePanel = application.CreateRibbonPanel("Speckle 2");
       string path = typeof(App).Assembly.Location;
-#if REVIT2019
-      //desctopui 1
-      var speckleButton = specklePanel.AddItem(new PushButtonData("Speckle 2", "Revit Connector", typeof(App).Assembly.Location, typeof(SpeckleRevitCommand).FullName)) as PushButton;
 
-      if (speckleButton != null)
-      {
-        speckleButton.Image = LoadPngImgSource("Speckle.ConnectorRevit.Assets.logo16_fade.png", path);
-        speckleButton.LargeImage = LoadPngImgSource("Speckle.ConnectorRevit.Assets.logo32_fade.png", path);
-        speckleButton.ToolTip = "Speckle Connector for Revit (old)";
-        speckleButton.AvailabilityClassName = typeof(CmdAvailabilityViews).FullName;
-        speckleButton.SetContextualHelp(new ContextualHelp(ContextualHelpType.Url, "https://speckle.systems"));
-      }
-#else
       //desktopui 2
       var speckleButton2 = specklePanel.AddItem(new PushButtonData("Speckle 2", "Revit Connector", typeof(App).Assembly.Location, typeof(SpeckleRevitCommand2).FullName)) as PushButton;
 
@@ -74,7 +62,7 @@ namespace Speckle.ConnectorRevit.Entry
         speckleButtonSend.AvailabilityClassName = typeof(CmdAvailabilityViews).FullName;
         speckleButtonSend.SetContextualHelp(new ContextualHelp(ContextualHelpType.Url, "https://speckle.systems"));
       }
-#endif
+
 
       PulldownButton helpPulldown = specklePanel.AddItem(new PulldownButtonData("Help&Resources", "Help & Resources")) as PulldownButton;
       helpPulldown.Image = LoadPngImgSource("Speckle.ConnectorRevit.Assets.help16.png", path);
@@ -109,13 +97,6 @@ namespace Speckle.ConnectorRevit.Entry
       AppInstance = sender as UIApplication;
       AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(OnAssemblyResolve);
 
-
-#if REVIT2019
-      //DUI1 - Set up bindings now as they subscribe to some document events and it's better to do it now
-      SpeckleRevitCommand.Bindings = new ConnectorBindingsRevit(AppInstance);
-      var eventHandler = ExternalEvent.Create(new SpeckleExternalEventHandler(SpeckleRevitCommand.Bindings));
-      SpeckleRevitCommand.Bindings.SetExecutorAndInit(eventHandler);
-#else
       //DUI2 - pre build app, so that it's faster to open up
       SpeckleRevitCommand2.uiapp = AppInstance;
       SpeckleRevitCommand2.InitAvalonia();
@@ -124,7 +105,7 @@ namespace Speckle.ConnectorRevit.Entry
       SpeckleRevitCommand2.Bindings = bindings;
       SchedulerCommand.Bindings = bindings;
       OneClickSendCommand.Bindings = bindings;
-#endif
+
 
     }
 

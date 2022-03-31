@@ -25,7 +25,13 @@ namespace Speckle.ConnectorRevit.Entry
 
     public static void InitAvalonia()
     {
-      BuildAvaloniaApp().Start(AppMain, null);
+      try
+      {
+        BuildAvaloniaApp().Start(AppMain, null);
+      }
+      catch (Exception ex)
+      {
+      }
     }
 
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
