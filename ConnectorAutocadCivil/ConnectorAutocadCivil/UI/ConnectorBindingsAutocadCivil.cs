@@ -136,9 +136,12 @@ namespace Speckle.ConnectorAutocadCivil.UI
       return new List<MenuItem>();
     }
 
-    public override void SelectClientObjects(string args)
+    public override void SelectClientObjects(string objs)
     {
-      throw new NotImplementedException();
+      if (Doc != null)
+        if (Doc.Database.TryGetObjectId(Utils.GetHandle(objs), out ObjectId id))
+          if (!id.IsErased && !id.IsNull)
+            Autodesk.AutoCAD.Internal.Utils.SelectObjects(new[] { id });
     }
 
     #endregion
@@ -599,42 +602,62 @@ namespace Speckle.ConnectorAutocadCivil.UI
           Handle hn = Utils.GetHandle(autocadObjectHandle);
           DBObject obj = hn.GetObject(tr, out string type, out string layer);
 
+          // create the progress report conversion object
+          ProgressReport.ConversionObject conversionObj = new ProgressReport.ConversionObject(autocadObjectHandle);
+
           if (obj == null)
           {
-            progress.Report.Log($"Skipped not found object: ${autocadObjectHandle}.");
+            conversionObj.Action = ProgressReport.ConversionAction.skipped;
+            conversionObj.Message = "Object id not found";
+            progress.Report.ConversionObjects.Add(conversionObj);
+            progress.Report.Log(conversionObj.Log);
             continue;
           }
 
           if (!converter.CanConvertToSpeckle(obj))
           {
-            progress.Report.Log($"Skipped not supported type: ${type}. Object ${obj.Id} not sent.");
+            conversionObj.Action = ProgressReport.ConversionAction.skipped;
+            conversionObj.Message = $"${type} type not supported";
+            progress.Report.ConversionObjects.Add(conversionObj);
+            progress.Report.Log(conversionObj.Log);
             continue;
           }
 
+          Base converted = null;
+          string containerName = string.Empty;
           try
           {
             // convert obj
-            Base converted = null;
-            string containerName = string.Empty;
             converted = converter.ConvertToSpeckle(obj);
-            if (converted == null)
-            {
-              progress.Report.LogConversionError(new Exception($"Failed to convert object {autocadObjectHandle} of type {type}."));
-              continue;
-            }
+            if (converted == null) continue;
 
             /* TODO: adding the extension dictionary / xdata per object 
             foreach (var key in obj.ExtensionDictionary)
               converted[key] = obj.ExtensionDictionary.GetUserString(key);
             */
+          }
+          catch (Exception e)
+          {
+            conversionObj.Action = ProgressReport.ConversionAction.failed;
+            conversionObj.Message = e.Message;
+            progress.Report.ConversionObjects.Add(conversionObj);
+            progress.Report.Log(conversionObj.Log);
+            continue;
+          }
 
 #if CIVIL2021 || CIVIL2022
-          // add property sets if this is Civil3D
-          var propertySets = obj.GetPropertySets(tr);
-          if (propertySets.Count > 0)
-            converted["propertySets"] = propertySets;
+          try
+          {
+            // add property sets if this is Civil3D
+            var propertySets = obj.GetPropertySets(tr);
+            if (propertySets.Count > 0)
+              converted["propertySets"] = propertySets;
+          }
+          catch (Exception e)
+          { }
 #endif
-
+          try
+          {
             if (obj is BlockReference)
               containerName = "Blocks";
             else
@@ -656,9 +679,8 @@ namespace Speckle.ConnectorAutocadCivil.UI
             converted.applicationId = autocadObjectHandle;
           }
           catch (Exception e)
-          {
-            progress.Report.LogConversionError(new Exception($"Failed to convert object {autocadObjectHandle} of type {type}: {e.Message}"));
-          }
+          { }
+          
           convertedCount++;
         }
 

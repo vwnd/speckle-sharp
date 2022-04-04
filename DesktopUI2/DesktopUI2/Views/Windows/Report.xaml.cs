@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using System.Collections;
 using System.Diagnostics;
 
 namespace DesktopUI2.Views.Windows

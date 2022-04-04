@@ -95,6 +95,37 @@ namespace Speckle.Core.Models
 
   public class ProgressReport
   {
+    public enum ConversionAction { converted, created, skipped, failed, updated };
+
+    /// <summary>
+    /// Keeps track of converted objects
+    /// </summary>
+    public class ConversionObject
+    {
+      public string Id { get; set; }
+      public ConversionAction Action { get; set; }
+      public string Message { get; set; }
+      public string Log { get => $"{Action} {Id}: {Message}"; }
+
+      public ConversionObject(string id, ConversionAction action = ConversionAction.converted, string exception = null)
+      {
+        Id = id;
+        Action = action;
+        Message = exception;
+      }
+    }
+
+    public string Selection { get; set; }
+
+    public List<ConversionObject> ConversionObjects { get; } = new List<ConversionObject>();
+    public List<string> ConversionObjectsLog 
+    { 
+      get
+      {
+        return ConversionObjects.Select(o => o.Log).ToList();
+      }
+    }
+
     /// <summary>
     /// Keeps track of the conversion process
     /// </summary>
@@ -105,11 +136,11 @@ namespace Speckle.Core.Models
       get
       {
         var summary = "";
-        var converted = ConversionLog.Count(x => x.ToLowerInvariant().Contains("converted"));
-        var created = ConversionLog.Count(x => x.ToLowerInvariant().Contains("created"));
-        var skipped = ConversionLog.Count(x => x.ToLowerInvariant().Contains("skipped"));
-        var failed = ConversionLog.Count(x => x.ToLowerInvariant().Contains("failed"));
-        var updated = ConversionLog.Count(x => x.ToLowerInvariant().Contains("updated"));
+        var converted = ConversionLog.Count(x => x.ToLowerInvariant().Contains(ConversionAction.converted.ToString()));
+        var created = ConversionLog.Count(x => x.ToLowerInvariant().Contains(ConversionAction.created.ToString()));
+        var skipped = ConversionLog.Count(x => x.ToLowerInvariant().Contains(ConversionAction.skipped.ToString()));
+        var failed = ConversionLog.Count(x => x.ToLowerInvariant().Contains(ConversionAction.failed.ToString()));
+        var updated = ConversionLog.Count(x => x.ToLowerInvariant().Contains(ConversionAction.updated.ToString()));
 
         summary += converted > 0 ? $"CONVERTED: {converted}\n" : "";
         summary += created > 0 ? $"CREATED: {created}\n" : "";
@@ -161,7 +192,6 @@ namespace Speckle.Core.Models
       }
     }
 
-
     public int OperationErrorsCount => OperationErrors.Count;
 
     public void LogOperationError(Exception exception)
@@ -172,6 +202,7 @@ namespace Speckle.Core.Models
 
     public void Merge(ProgressReport report)
     {
+      this.ConversionObjects.AddRange(report.ConversionObjects);
       this.ConversionErrors.AddRange(report.ConversionErrors);
       this.OperationErrors.AddRange(report.OperationErrors);
       this.ConversionLog.AddRange(report.ConversionLog);

@@ -4,6 +4,7 @@ using DesktopUI2.Models.Settings;
 using DesktopUI2.ViewModels;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
+using Speckle.Core.Models;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -248,7 +249,6 @@ namespace DesktopUI2
 
     public override void SelectClientObjects(string args)
     {
-      throw new NotImplementedException();
     }
 
     public override async Task<StreamState> ReceiveStream(StreamState state, ProgressViewModel progress)
@@ -311,11 +311,19 @@ namespace DesktopUI2
 
       for (int i = 1; i < 100; i += 10)
       {
+        // create the progress report conversion object
+        ProgressReport.ConversionObject conversionObj = new ProgressReport.ConversionObject(i.ToString());
+
         if (progress.CancellationTokenSource.Token.IsCancellationRequested)
         {
           progress.Report.Log("Fake sending was cancelled");
           return null;
         }
+
+        conversionObj.Action = ProgressReport.ConversionAction.converted;
+        conversionObj.Message = "Converted obj";
+        progress.Report.ConversionObjects.Add(conversionObj);
+        progress.Report.Log(conversionObj.Log);
 
         progress.Report.Log("Done fake task " + i);
         await Task.Delay(TimeSpan.FromMilliseconds(rnd.Next(200, 1000)));

@@ -1,8 +1,10 @@
-﻿using DesktopUI2.Views;
+﻿using Avalonia.Controls.Selection;
+using DesktopUI2.Views;
 using DesktopUI2.Views.Windows;
 using ReactiveUI;
 using Speckle.Core.Logging;
 using Speckle.Core.Models;
+using Splat;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,12 +15,21 @@ using System.Web;
 namespace DesktopUI2.ViewModels
 {
 
-
   public class ProgressViewModel : ReactiveObject
   {
     public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
 
+    private ConnectorBindings Bindings;
+
     public ProgressReport Report { get; set; } = new ProgressReport();
+
+    public List<string> ReportObjects
+    {
+      get
+      {
+        return Report.ConversionObjects.Select(o => o.Log).ToList();
+      }
+    }
 
     private ConcurrentDictionary<string, int> _progressDict;
 
@@ -95,6 +106,22 @@ namespace DesktopUI2.ViewModels
         if (!IsProgressing && Value != 0)
           ProgressSummary = "Done!";
       }
+    }
+
+    public SelectionModel<string> Selection { get; }
+    public ProgressViewModel()
+    {
+      Selection = new SelectionModel<string>();
+      Selection.SelectionChanged += SelectionChanged;
+
+      //use dependency injection to get bindings
+      Bindings = Locator.Current.GetService<ConnectorBindings>();
+    }
+    void SelectionChanged(object sender, SelectionModelSelectionChangedEventArgs e)
+    {
+      var selectedIndex = e.SelectedIndexes.FirstOrDefault();
+      Report.Selection = Report.ConversionObjects[selectedIndex].Id;
+      Bindings.SelectClientObjects(Report.Selection);
     }
 
     public void Update(ConcurrentDictionary<string, int> pd)

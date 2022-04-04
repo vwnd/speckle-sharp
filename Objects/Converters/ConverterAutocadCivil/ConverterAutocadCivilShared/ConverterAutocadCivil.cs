@@ -91,177 +91,179 @@ public static string AutocadAppName = VersionedHostApplications.Autocad2022;
       switch (@object)
       {
         case DBObject obj:
-          /*
-          // check for speckle schema xdata
-          string schema = GetSpeckleSchema(o.XData);
-          if (schema != null)
-            return ObjectToSpeckleBuiltElement(o);
-          */
+          ProgressReport.ConversionObject conversionObj = new ProgressReport.ConversionObject(obj.Handle.ToString());
           switch (obj)
           {
             case DBPoint o:
               @base = PointToSpeckle(o);
-              Report.Log($"Converted Point3d {o}");
+              conversionObj.Message = "AutoCAD Point as Point";
               break;
             case AcadDB.Line o:
               @base = LineToSpeckle(o);
-              Report.Log($"Converted Line");
+              conversionObj.Message = "AutoCAD Line as Line";
               break;
             case AcadDB.Arc o:
               @base = ArcToSpeckle(o);
-              Report.Log($"Converted Arc");
+              conversionObj.Message = "AutoCAD Arc as Arc";
               break;
             case AcadDB.Circle o:
               @base = CircleToSpeckle(o);
-              Report.Log($"Converted Circle");
+              conversionObj.Message = "AutoCAD Circle as Circle";
               break;
             case AcadDB.Ellipse o:
               @base = EllipseToSpeckle(o);
-              Report.Log($"Converted Ellipse");
+              conversionObj.Message = "AutoCAD Ellipse as Ellipse";
               break;
             case AcadDB.Hatch o:
               @base = HatchToSpeckle(o);
-              Report.Log($"Converted Hatch");
+              conversionObj.Message = "AutoCAD Hatch as Hatch";
               break;
             case AcadDB.Spline o:
               @base = SplineToSpeckle(o);
-              Report.Log($"Converted Spline");
+              conversionObj.Message = "AutoCAD Spline as Curve";
               break;
             case AcadDB.Polyline o:
               if (o.IsOnlyLines) // db polylines can have arc segments, decide between polycurve or polyline conversion
               {
                 @base = PolylineToSpeckle(o);
-                Report.Log($"Converted Polyline as Polyline");
+                conversionObj.Message = "AutoCAD Polyline as Polyline";
               }
               else
               {
                 @base = PolycurveToSpeckle(o);
-                Report.Log($"Converted Polyline as Polycurve");
+                conversionObj.Message = "AutoCAD Polyline as Polycurve";
               }
               break;
             case AcadDB.Polyline3d o:
               @base = PolylineToSpeckle(o);
-              Report.Log($"Converted Polyline3d");
+              conversionObj.Message = "AutoCAD Polyline3d as Polyline";
               break;
             case AcadDB.Polyline2d o:
               @base = PolycurveToSpeckle(o);
-              Report.Log($"Converted Polyline2d as Polycurve");
+              conversionObj.Message = "AutoCAD Polyline2d as Polycurve";
               break;
             case Region o:
               @base = RegionToSpeckle(o);
-              Report.Log($"Converted Region as Mesh");
+              conversionObj.Message = "AutoCAD Region as Mesh";
               break;
             case AcadDB.Surface o:
               @base = SurfaceToSpeckle(o);
-              Report.Log($"Converted Surface as Mesh");
+              conversionObj.Message = "AutoCAD Surface as Mesh";
               break;
             case AcadDB.PolyFaceMesh o:
               @base = MeshToSpeckle(o);
-              Report.Log($"Converted PolyFace Mesh");
+              conversionObj.Message = "AutoCAD PolyFaceMesh as Mesh";
               break;
             case SubDMesh o:
               @base = MeshToSpeckle(o);
-              Report.Log($"Converted SubD Mesh");
+              conversionObj.Message = "AutoCAD SubDMesh as Mesh";
               break;
             case Solid3d o:
               if (o.IsNull)
               {
-                Report.Log($"Skipped null Solid");
-                return null;
+                conversionObj.Message = "AutoCAD Solid3d was null";
               }
-              @base = SolidToSpeckle(o);
-              Report.Log($"Converted Solid as Mesh");
+              else
+              {
+                @base = SolidToSpeckle(o);
+                conversionObj.Message = "AutoCAD Solid3d as Mesh";
+              }
               break;
             case BlockReference o:
               @base = BlockReferenceToSpeckle(o);
-              Report.Log($"Converted Block Instance");
+              conversionObj.Message = "AutoCAD BlockReference as BlockInstance";
               break;
             case BlockTableRecord o:
               @base = BlockRecordToSpeckle(o);
-              Report.Log($"Converted Block Definition");
+              conversionObj.Message = "AutoCAD BlockTableRecord as BlockDefinition";
               break;
             case AcadDB.DBText o:
               @base = TextToSpeckle(o);
-              Report.Log($"Converted Text");
+              conversionObj.Message = "AutoCAD DBText as Text";
               break;
             case AcadDB.MText o:
               @base = TextToSpeckle(o);
-              Report.Log($"Converted Text");
+              conversionObj.Message = "AutoCAD MText as Text";
               break;
 #if (CIVIL2021 || CIVIL2022)
             case CivilDB.Alignment o:
               @base = AlignmentToSpeckle(o);
-              Report.Log($"Converted Alignment");
+              conversionObj.Message = "Civil3D Alignment as Alignment";
               break;
             case CivilDB.Corridor o:
               @base = CorridorToSpeckle(o);
-              Report.Log($"Converted Corridor as Base");
+              conversionObj.Message = "Civil3D Corridor as Base";
               break;
             case CivilDB.FeatureLine o:
               @base = FeatureLineToSpeckle(o);
-              Report.Log($"Converted FeatureLine");
+              conversionObj.Message = "Civil3D FeatureLine as FeatureLine";
               break;
             case CivilDB.Structure o:
               @base = StructureToSpeckle(o);
-              Report.Log($"Converted Structure");
+              conversionObj.Message = "Civil3D Structure as Structure";
               break;
             case CivilDB.Pipe o:
               @base = PipeToSpeckle(o);
-              Report.Log($"Converted Pipe");
+              conversionObj.Message = "Civil3D Pipe as Pipe";
               break;
             case CivilDB.PressurePipe o:
               @base = PipeToSpeckle(o);
-              Report.Log($"Converted Pressure Pipe");
+              conversionObj.Message = "Civil3D PressurePipe as Pipe";
               break;
             case CivilDB.Profile o:
               @base = ProfileToSpeckle(o);
-              Report.Log($"Converted Profile as Base");
+              conversionObj.Message = "Civil3D Profile as Profile";
               break;
             case CivilDB.TinSurface o:
               @base = SurfaceToSpeckle(o);
-              Report.Log($"Converted TIN Surface as mesh");
+              conversionObj.Message = "Civil3D TinSurface as Mesh";
               break;
 #endif
           }
 
-          DisplayStyle style = DisplayStyleToSpeckle(obj as Entity);
-          if (style != null)
-            @base["displayStyle"] = style;
+          try
+          {
+            DisplayStyle style = DisplayStyleToSpeckle(obj as Entity);
+            if (style != null)
+              @base["displayStyle"] = style;
+          }
+          catch (Exception e)
+          { }
+
+          if (@base != null)
+            conversionObj.Action = ProgressReport.ConversionAction.converted;
+          else
+            conversionObj.Action = ProgressReport.ConversionAction.failed;
+          Report.ConversionObjects.Add(conversionObj);
+          Report.Log(conversionObj.Log);
           break;
 
         case Acad.Geometry.Point3d o:
           @base = PointToSpeckle(o);
-          Report.Log($"Converted Point3d {o}");
           break;
 
         case Acad.Geometry.Vector3d o:
           @base = VectorToSpeckle(o);
-          Report.Log($"Converted Vector3d {o}");
           break;
 
         case Acad.Geometry.Line3d o:
           @base = LineToSpeckle(o);
-          Report.Log($"Converted Line3d");
           break;
 
         case Acad.Geometry.LineSegment3d o:
           @base = LineToSpeckle(o);
-          Report.Log($"Converted LineSegment");
           break;
 
         case Acad.Geometry.CircularArc3d o:
           @base = ArcToSpeckle(o);
-          Report.Log($"Converted Arc3d");
           break;
 
         case Acad.Geometry.Plane o:
           @base = PlaneToSpeckle(o);
-          Report.Log($"Converted Plane");
           break;
 
         case Acad.Geometry.Curve3d o:
           @base = CurveToSpeckle(o) as Base;
-          Report.Log($"Converted Curve3d");
           break;
 
         default:

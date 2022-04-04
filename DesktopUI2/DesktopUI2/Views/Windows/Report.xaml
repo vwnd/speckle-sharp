@@ -63,12 +63,17 @@
       MaxHeight="300"
       VerticalAlignment="Top"
       Header="Log">
-      <TextBox
-        BorderThickness="0"
-        Classes="Readonly"
-        IsReadOnly="True"
-        Text="{Binding Report.ConversionLogString}" />
+      <ListBox Items="{Binding Report.ConversionObjectsLog}" Selection="{Binding Selection}">
+        <ListBox.ItemTemplate>
+            <DataTemplate>
+                <Border CornerRadius="4" Padding="4">
+                    <TextBlock Text="{Binding}" TextWrapping="Wrap"/>
+                </Border>
+            </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
     </Expander>
+      
     <StackPanel
       Grid.Row="3"
       Margin="15"
