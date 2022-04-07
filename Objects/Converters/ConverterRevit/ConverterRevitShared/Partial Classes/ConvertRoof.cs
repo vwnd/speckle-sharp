@@ -47,17 +47,23 @@ namespace Objects.Converter.Revit
         case RevitExtrusionRoof speckleExtrusionRoof:
           {
             var referenceLine = LineToNative(speckleExtrusionRoof.referenceLine);
-            var norm = GetPerpendicular(referenceLine.GetEndPoint(0) - referenceLine.GetEndPoint(1)).Negate();
-            ReferencePlane plane = Doc.Create.NewReferencePlane(referenceLine.GetEndPoint(0),
-              referenceLine.GetEndPoint(1),
+            var norm = GetPerpendicular(referenceLine.GetEndPoint(1) - referenceLine.GetEndPoint(0));
+            ReferencePlane plane = Doc.Create.NewReferencePlane(referenceLine.GetEndPoint(1),
+              referenceLine.GetEndPoint(0),
               norm,
               Doc.ActiveView);
+            //plane.Flip();
             //create floor without a type
             var start = ScaleToNative(speckleExtrusionRoof.start, speckleExtrusionRoof.units);
             var end = ScaleToNative(speckleExtrusionRoof.end, speckleExtrusionRoof.units);
-            revitRoof = Doc.Create.NewExtrusionRoof(outline, plane, level, roofType, start, end);
+
+            revitRoof = Doc.Create.NewExtrusionRoof(outline, plane, level, roofType, -start, -end);
+
+            var st = GetParamValue<double>(revitRoof, BuiltInParameter.EXTRUSION_START_PARAM);
+            var en = GetParamValue<double>(revitRoof, BuiltInParameter.EXTRUSION_END_PARAM);
+            
             break;
-          }
+          } 
         case RevitFootprintRoof speckleFootprintRoof:
           {
             ModelCurveArray curveArray = new ModelCurveArray();
@@ -170,7 +176,7 @@ namespace Objects.Converter.Revit
             };
             var plane = revitExtrusionRoof.GetProfile().get_Item(0).SketchPlane.GetPlane();
             speckleExtrusionRoof.referenceLine =
-            new Line(PointToSpeckle(plane.Origin.Add(plane.XVec.Normalize().Negate())), PointToSpeckle(plane.Origin), ModelUnits); //TODO: test!
+            new Line(PointToSpeckle(plane.Origin), PointToSpeckle(plane.Origin.Add(plane.XVec.Normalize())), ModelUnits); //TODO: test!
             speckleExtrusionRoof.level = ConvertAndCacheLevel(revitExtrusionRoof, BuiltInParameter.ROOF_CONSTRAINT_LEVEL_PARAM);
             speckleRoof = speckleExtrusionRoof;
             break;

@@ -646,7 +646,7 @@ namespace Objects.Converter.Revit
       if (ixn.IsAlmostEqualTo(xn))
         xn = new XYZ(0, 1, 0);
 
-      return ixn.CrossProduct(xn).Normalize();
+      return xn.CrossProduct(ixn).Normalize();
     }
 
     public Geometry.Surface FaceToSpeckle(DB.Face face, DB.BoundingBoxUV uvBox, string units = null)
