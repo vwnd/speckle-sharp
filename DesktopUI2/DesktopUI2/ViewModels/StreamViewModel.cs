@@ -129,9 +129,6 @@ namespace DesktopUI2.ViewModels
 
     private Client Client { get; }
 
-
-
-
     public ReactiveCommand<Unit, Unit> GoBack => MainWindowViewModel.RouterInstance.NavigateBack;
 
     //If we don't have access to this stream
@@ -146,8 +143,6 @@ namespace DesktopUI2.ViewModels
         this.RaiseAndSetIfChanged(ref _isReceiver, value);
       }
     }
-
-
 
     private Branch _selectedBranch;
     public Branch SelectedBranch
@@ -241,9 +236,6 @@ namespace DesktopUI2.ViewModels
     public bool HasSettings => true; //AvailableSettings != null && AvailableSettings.Any();
     public bool HasCommits => Commits != null && Commits.Any();
 
-
-
-
     public string _previewImageUrl = "";
     public string PreviewImageUrl
     {
@@ -296,7 +288,6 @@ namespace DesktopUI2.ViewModels
       Init();
     }
     public StreamViewModel(StreamState streamState, IScreen hostScreen, ICommand removeSavedStreamCommand)
-
     {
       StreamState = streamState;
       //use cached stream, then load a fresh one async 
@@ -338,16 +329,8 @@ namespace DesktopUI2.ViewModels
     {
       GetStream().ConfigureAwait(false);
 
-      //get available filters from our bindings
-      AvailableFilters = new List<FilterViewModel>(Bindings.GetSelectionFilters().Select(x => new FilterViewModel(x)));
-      SelectedFilter = AvailableFilters[0];
-
-      //get available settings from our bindings
-      Settings = Bindings.GetSettings();
-
       GetBranchesAndRestoreState();
       GetActivity();
-
     }
 
     private void UpdateTextTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -391,8 +374,15 @@ namespace DesktopUI2.ViewModels
       }
     }
 
-    private async void GetBranchesAndRestoreState()
+    internal async void GetBranchesAndRestoreState()
     {
+      //get available settings from our bindings
+      Settings = Bindings.GetSettings();
+
+      //get available filters from our bindings
+      AvailableFilters = new List<FilterViewModel>(Bindings.GetSelectionFilters().Select(x => new FilterViewModel(x)));
+      SelectedFilter = AvailableFilters[0];
+
       var branches = await Client.StreamGetBranches(Stream.id, 100, 0);
       Branches = branches;
 
@@ -489,7 +479,6 @@ namespace DesktopUI2.ViewModels
       }
     }
 
-
     private async void Client_OnCommitCreated(object sender, Speckle.Core.Api.SubscriptionModels.CommitInfo info)
     {
       var branches = await Client.StreamGetBranches(StreamState.StreamId);
@@ -503,7 +492,6 @@ namespace DesktopUI2.ViewModels
       NotificationUrl = $"{StreamState.ServerUrl}/streams/{StreamState.StreamId}/commits/{cinfo.id}";
       ScrollToBottom();
     }
-
 
     public void DownloadImage(string url)
     {
@@ -561,7 +549,6 @@ namespace DesktopUI2.ViewModels
     public void EditSavedStreamCommand()
     {
       MainWindowViewModel.RouterInstance.Navigate.Execute(this);
-      Tracker.TrackPageview("stream", "edit");
       Analytics.TrackEvent(Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Edit" } });
     }
 
@@ -571,7 +558,6 @@ namespace DesktopUI2.ViewModels
       await Task.Delay(100);
       //to open urls in .net core must set UseShellExecute = true
       Process.Start(new ProcessStartInfo(Url) { UseShellExecute = true });
-      Tracker.TrackPageview(Tracker.STREAM_VIEW);
       Analytics.TrackEvent(Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream View" } });
     }
 
@@ -598,7 +584,6 @@ namespace DesktopUI2.ViewModels
       {
         LastUsed = DateTime.Now.ToString();
         Analytics.TrackEvent(Client.Account, Analytics.Events.Send);
-        Tracker.TrackPageview(Tracker.SEND);
 
         Notification = $"Sent successfully, view online";
         NotificationUrl = $"{StreamState.ServerUrl}/streams/{StreamState.StreamId}/commits/{commitId}";
@@ -625,7 +610,6 @@ namespace DesktopUI2.ViewModels
       {
         LastUsed = DateTime.Now.ToString();
         Analytics.TrackEvent(StreamState.Client.Account, Analytics.Events.Receive);
-        Tracker.TrackPageview(Tracker.RECEIVE);
       }
 
       if (Progress.Report.ConversionErrorsCount > 0 || Progress.Report.OperationErrorsCount > 0)
@@ -673,13 +657,11 @@ namespace DesktopUI2.ViewModels
 
       if (IsReceiver)
       {
-        Tracker.TrackPageview(Tracker.RECEIVE_ADDED);
         Analytics.TrackEvent(Client.Account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Receiver Add" } });
       }
 
       else
       {
-        Tracker.TrackPageview(Tracker.SEND_ADDED);
         Analytics.TrackEvent(Client.Account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Sender Add" } });
       }
     }

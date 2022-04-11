@@ -115,6 +115,7 @@ namespace DesktopUI2.ViewModels
       }
     }
 
+    private StreamViewModel _selectedSavedStream;
     public StreamViewModel SelectedSavedStream
     {
       set
@@ -123,8 +124,8 @@ namespace DesktopUI2.ViewModels
         {
           value.UpdateVisualParentAndInit(HostScreen);
           MainWindowViewModel.RouterInstance.Navigate.Execute(value);
-          Tracker.TrackPageview("stream", "edit");
           Analytics.TrackEvent(Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Edit" } });
+          _selectedSavedStream = value;
         }
       }
     }
@@ -188,14 +189,12 @@ namespace DesktopUI2.ViewModels
       this.RaisePropertyChanged("SavedStreams");
       Init();
 
-
       var config = ConfigManager.Load();
       ChangeTheme(config.DarkTheme);
-
     }
 
     /// <summary>
-    /// This get usually triggered on file open or view activated
+    /// This usually gets triggered on file open or view activated
     /// </summary>
     /// <param name="streams"></param>
     internal void UpdateSavedStreams(List<StreamState> streams)
@@ -205,6 +204,12 @@ namespace DesktopUI2.ViewModels
       streams.ForEach(x => SavedStreams.Add(new StreamViewModel(x, HostScreen, RemoveSavedStreamCommand)));
       this.RaisePropertyChanged("HasSavedStreams");
       SavedStreams.CollectionChanged += SavedStreams_CollectionChanged;
+    }
+
+    internal void UpdateSelectedStream()
+    {
+      if (_selectedSavedStream != null)
+        _selectedSavedStream.GetBranchesAndRestoreState();
     }
 
     //write changes to file every time they happen
@@ -238,8 +243,6 @@ namespace DesktopUI2.ViewModels
       }
 
       this.RaisePropertyChanged("HasSavedStreams");
-
-
     }
 
     private async Task GetStreams()
@@ -325,7 +328,6 @@ namespace DesktopUI2.ViewModels
       if (s != null)
       {
         SavedStreams.Remove(s);
-        Tracker.TrackPageview("stream", "remove");
         if (s.StreamState.Client != null)
           Analytics.TrackEvent(s.StreamState.Client.Account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Remove" } });
       }
@@ -416,7 +418,6 @@ namespace DesktopUI2.ViewModels
     {
       var streamAcc = parameter as StreamAccountWrapper;
       Process.Start(new ProcessStartInfo($"{streamAcc.Account.serverInfo.url.TrimEnd('/')}/streams/{streamAcc.Stream.id}") { UseShellExecute = true });
-      Tracker.TrackPageview(Tracker.STREAM_VIEW);
       Analytics.TrackEvent(streamAcc.Account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream View" } });
     }
 
@@ -453,7 +454,6 @@ namespace DesktopUI2.ViewModels
 
           OpenStream(streamState);
 
-          Tracker.TrackPageview(Tracker.STREAM_CREATE);
           Analytics.TrackEvent(dialog.Account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Create" } });
 
           GetStreams().ConfigureAwait(false); //update streams
@@ -508,7 +508,6 @@ namespace DesktopUI2.ViewModels
 
           OpenStream(streamState);
 
-          Tracker.TrackPageview("stream", "add-from-url");
           Analytics.TrackEvent(account, Analytics.Events.DUIAction, new Dictionary<string, object>() { { "name", "Stream Add From URL" } });
         }
         catch (Exception e)
