@@ -37,9 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesktopUI2", "..\DesktopUI2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PolygonMesher", "..\Objects\Converters\StructuralUtilities\PolygonMesher\PolygonMesher.csproj", "{BF1A4F95-ACF7-4353-B60A-4D79C2F44651}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverCSharp", "DriverCSharp\DriverCSharp.csproj", "{C091E499-597D-4077-B83F-08E069091090}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DriverPluginCSharp", "DriverPluginCSharp\DriverPluginCSharp.csproj", "{C59939F6-D383-44E3-A7EF-4E160E3DFB73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvaloniaHwndHost", "..\DesktopUI2\AvaloniaHwndHost\AvaloniaHwndHost.csproj", "{CF2EBDB8-F79B-4649-B0BA-42D5FF707586}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -56,7 +54,6 @@ Global
 		..\Objects\Converters\ConverterCSI\ConverterCSIShared\ConverterCSIShared.projitems*{8431e383-838b-4f0a-8065-979c3dae9ccb}*SharedItemsImports = 5
 		ConnectorCSIShared\ConnectorCSIShared.projitems*{9d188843-8841-4a76-a844-efbe8e32ee05}*SharedItemsImports = 4
 		..\Objects\Converters\ConverterCSI\ConverterCSIShared\ConverterCSIShared.projitems*{9d188843-8841-4a76-a844-efbe8e32ee05}*SharedItemsImports = 4
-		ConnectorCSIShared\ConnectorCSIShared.projitems*{c091e499-597d-4077-b83f-08e069091090}*SharedItemsImports = 4
 		..\Objects\Converters\ConverterCSI\ConverterCSIShared\ConverterCSIShared.projitems*{c95c0d85-50c2-46d1-9e27-f86d0d40058c}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -112,14 +109,10 @@ Global
 		{BF1A4F95-ACF7-4353-B60A-4D79C2F44651}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF1A4F95-ACF7-4353-B60A-4D79C2F44651}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF1A4F95-ACF7-4353-B60A-4D79C2F44651}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C091E499-597D-4077-B83F-08E069091090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C091E499-597D-4077-B83F-08E069091090}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C091E499-597D-4077-B83F-08E069091090}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C091E499-597D-4077-B83F-08E069091090}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C59939F6-D383-44E3-A7EF-4E160E3DFB73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C59939F6-D383-44E3-A7EF-4E160E3DFB73}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C59939F6-D383-44E3-A7EF-4E160E3DFB73}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C59939F6-D383-44E3-A7EF-4E160E3DFB73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF2EBDB8-F79B-4649-B0BA-42D5FF707586}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF2EBDB8-F79B-4649-B0BA-42D5FF707586}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF2EBDB8-F79B-4649-B0BA-42D5FF707586}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF2EBDB8-F79B-4649-B0BA-42D5FF707586}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -140,8 +133,7 @@ Global
 		{9B52A849-5841-4463-868F-EC4B83B96485} = {37D16D91-5EF3-4889-9BFD-082CC425CB0D}
 		{0C1B9AE4-1D21-4C02-BDAC-287E9660B5F6} = {37D16D91-5EF3-4889-9BFD-082CC425CB0D}
 		{BF1A4F95-ACF7-4353-B60A-4D79C2F44651} = {37D16D91-5EF3-4889-9BFD-082CC425CB0D}
-		{C091E499-597D-4077-B83F-08E069091090} = {3DA56828-5C39-4872-A5A4-E3E50D9873BC}
-		{C59939F6-D383-44E3-A7EF-4E160E3DFB73} = {3DA56828-5C39-4872-A5A4-E3E50D9873BC}
+		{CF2EBDB8-F79B-4649-B0BA-42D5FF707586} = {37D16D91-5EF3-4889-9BFD-082CC425CB0D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61234D5B-1E5E-4C97-89A1-FA97E4B63D95}

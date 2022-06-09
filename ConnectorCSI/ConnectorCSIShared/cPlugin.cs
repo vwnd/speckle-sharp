@@ -27,8 +27,7 @@ namespace SpeckleConnectorCSI
     public Timer SelectionTimer;
     public static cSapModel model { get; set; }
 
-    public static Window MainWindow { get; private set; }
-
+    public static MainViewModel ViewModel { get; private set; }
     public static ConnectorBindingsCSI Bindings { get; set; }
 
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
@@ -39,31 +38,37 @@ namespace SpeckleConnectorCSI
       .UseReactiveUI();
 
 
-    public static void CreateOrFocusSpeckle()
+    public static void InitAvalonia()
     {
-      if (MainWindow == null)
-      {
-        BuildAvaloniaApp().Start(AppMain, null);
-      }
-
-      MainWindow.Show();
-      MainWindow.Activate();
+      BuildAvaloniaApp().SetupWithoutStarting();
     }
 
-    private static void AppMain(Application app, string[] args)
-    {
-      var viewModel = new MainViewModel(Bindings);
-      MainWindow = new MainWindow { DataContext = viewModel };
-      MainWindow.Closed += SpeckleWindowClosed;
-      MainWindow.Closing += SpeckleWindowClosed;
-      app.Run(MainWindow);
-      //Task.Run(() => app.Run(MainWindow));
-    }
+
+    //public static void CreateOrFocusSpeckle()
+    //{
+    //  if (MainWindow == null)
+    //  {
+    //    BuildAvaloniaApp().Start(AppMain, null);
+    //  }
+
+    //  MainWindow.Show();
+    //  MainWindow.Activate();
+    //}
+
+    //private static void AppMain(Application app, string[] args)
+    //{
+    //  var viewModel = new MainViewModel(Bindings);
+    //  MainWindow = new MainWindow { DataContext = viewModel };
+    //  MainWindow.Closed += SpeckleWindowClosed;
+    //  MainWindow.Closing += SpeckleWindowClosed;
+    //  app.Run(MainWindow);
+    //  //Task.Run(() => app.Run(MainWindow));
+    //}
 
     public static void OpenOrFocusSpeckle(cSapModel model)
     {
       Bindings = new ConnectorBindingsCSI(model);
-      CreateOrFocusSpeckle();
+      //CreateOrFocusSpeckle();
     }
 
 
@@ -108,6 +113,8 @@ namespace SpeckleConnectorCSI
       cSapModel model;
       pluginCallback = ISapPlugin;
       AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(OnAssemblyResolve);
+      InitAvalonia();
+      
       model = SapModel;
       AppDomain domain = null;
  
