@@ -10,19 +10,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)cPlugin.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\Panel.xaml.cs">
-      <DependentUpon>Panel.xaml</DependentUpon>
-    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)StreamStateManager\StreamStateManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsCSI.ClientOperations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsCSI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsCSI.Recieve.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsCSI.Selection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsCSI.Send.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MainWindow.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Util\ConnectorCSIUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="$(MSBuildThisFileDirectory)UI\Panel.xaml">
+    <Page Include="$(MSBuildThisFileDirectory)UI\MainWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

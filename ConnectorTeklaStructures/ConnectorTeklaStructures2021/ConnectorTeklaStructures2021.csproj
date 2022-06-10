@@ -46,6 +46,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -57,13 +58,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +67,10 @@
     <ProjectReference Include="..\..\Core\Core\Core.csproj">
       <Project>{2530aef3-2238-4166-9aac-f674e3b429b6}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DesktopUI2\AvaloniaHwndHost\AvaloniaHwndHost.csproj">
+      <Project>{9183213d-a98e-4eec-9527-2504b6029029}</Project>
+      <Name>AvaloniaHwndHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DesktopUI2\DesktopUI2\DesktopUI2.csproj">
       <Project>{3d522de4-1f73-486f-b07d-6ad794f784fd}</Project>
@@ -114,11 +112,6 @@
     <PackageReference Include="TeklaOpenAPI">
       <Version>2021.0.1</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="et_element_Speckle.ConnectorTeklaStructures.bmp">

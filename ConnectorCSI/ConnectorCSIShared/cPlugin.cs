@@ -121,8 +121,12 @@ namespace SpeckleConnectorCSI
 
       try
       {
-        OpenOrFocusSpeckle(model);
-
+        //OpenOrFocusSpeckle(model);
+        Bindings = new ConnectorBindingsCSI(model);
+        var windows = new Speckle.ConnectorCSI.UI.MainWindow();
+        var viewModel = new MainViewModel(Bindings);
+        windows.DataContext = viewModel;
+        windows.Show();
 
       }
 

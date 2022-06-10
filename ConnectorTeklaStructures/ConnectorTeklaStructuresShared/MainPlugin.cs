@@ -31,43 +31,51 @@ namespace Speckle.ConnectorTeklaStructures
   {
   }
   [Plugin("Speckle.ConnectorTeklaStructures")]
-  [PluginUserInterface("Speckle.ConnectorTeklaStructures.MainForm")]
+  [PluginUserInterface("Speckle.ConnectorTeklaStructures.UI.MainWindow")]
 
 
   public class MainPlugin : PluginBase
   {
     public static Window MainWindow { get; private set; }
 
+    public static MainViewModel ViewModel { get; private set; }
+
     public static ConnectorBindingsTeklaStructures Bindings { get; set; }
     public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<DesktopUI2.App>()
-.UsePlatformDetect()
-.With(new SkiaOptions { MaxGpuResourceSizeBytes = 8096000 })
-.With(new Win32PlatformOptions { AllowEglInitialization = true, EnableMultitouch = false })
-.LogToTrace()
-.UseReactiveUI();
+       .UsePlatformDetect()
+       .With(new SkiaOptions { MaxGpuResourceSizeBytes = 8096000 })
+       .With(new Win32PlatformOptions { AllowEglInitialization = true, EnableMultitouch = false })
+       .LogToTrace()
+       .UseReactiveUI();
 
-    private static void AppMain(Application app, string[] args)
+
+    public static void InitAvalonia()
     {
-      var viewModel = new MainViewModel(Bindings);
-      MainWindow = new MainWindow
-      {
-        DataContext = viewModel
-      };
-
-      app.Run(MainWindow);
-      //System.Threading.Tasks.Task.Run(() => app.Run(MainWindow));
+      BuildAvaloniaApp().SetupWithoutStarting();
     }
-    public static void CreateOrFocusSpeckle()
-    {
-      if (MainWindow == null)
-      {
-        BuildAvaloniaApp().Start(AppMain, null);
-      }
+
+    //private static void AppMain(Application app, string[] args)
+    //{
+    //  var viewModel = new MainViewModel(Bindings);
+    //  MainWindow = new MainWindow
+    //  {
+    //    DataContext = viewModel
+    //  };
+
+    //  app.Run(MainWindow);
+    //  //System.Threading.Tasks.Task.Run(() => app.Run(MainWindow));
+    //}
+    //public static void CreateOrFocusSpeckle()
+    //{
+    //  if (MainWindow == null)
+    //  {
+    //    BuildAvaloniaApp().Start(AppMain, null);
+    //  }
 
 
-      MainWindow.Show();
-      MainWindow.Activate();
-    }
+    //  MainWindow.Show();
+    //  MainWindow.Activate();
+    //}
 
     // Enable inserting of objects in a model
     private readonly Model model;
@@ -117,8 +125,12 @@ namespace Speckle.ConnectorTeklaStructures
       try
       {
         AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(OnAssemblyResolve);
-        CreateOrFocusSpeckle();
-
+        //CreateOrFocusSpeckle();
+        InitAvalonia();
+        Bindings = new ConnectorBindingsTeklaStructures(model);
+        var windows = new Speckle.ConnectorTeklaStructures.UI.MainWindow();
+        var viewModel = new MainViewModel(Bindings);
+        windows.DataContext = viewModel;
       }
       catch (Exception e)
       {

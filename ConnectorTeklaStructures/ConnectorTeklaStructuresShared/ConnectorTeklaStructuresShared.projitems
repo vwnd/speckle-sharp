@@ -15,6 +15,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsTeklaStructures.ClientOperations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsTeklaStructures.Receive.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConnectorBindingsTeklaStructures.Selection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Util\ConnectorTeklaStructuresUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="$(MSBuildThisFileDirectory)UI\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>
