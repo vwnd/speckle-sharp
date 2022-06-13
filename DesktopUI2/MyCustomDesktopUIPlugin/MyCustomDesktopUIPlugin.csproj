@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <TargetExt>.spckl</TargetExt>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Core\Core\Core.csproj" />
+      <ProjectReference Include="..\DesktopUI2\DesktopUI2.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AvaloniaXaml Include="MyCustomFilterView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </AvaloniaXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="RhinoCommon" Version="7.4.21078.1001" />
+    </ItemGroup>
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Condition="$([MSBuild]::IsOsPlatform('Windows'))" Command="xcopy /Y /S &quot;$(TargetDir)$(AssemblyName).spckl&quot; &quot;$(AppData)\Speckle\Plugins\$(ProjectName)\&quot;" />
+        <Exec Condition="$([MSBuild]::IsOsPlatform('OSX'))" Command="mkdir -p $HOME'/.config/Speckle/Plugins/$(ProjectName)'" />
+        <Exec Condition="$([MSBuild]::IsOsPlatform('OSX'))" Command="cp '$(TargetDir)$(AssemblyName).spckl' $HOME'/.config/Speckle/Plugins/$(ProjectName)/'" />
+    </Target>
+</Project>

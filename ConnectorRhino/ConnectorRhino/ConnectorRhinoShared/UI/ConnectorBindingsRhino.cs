@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using DesktopUI2;
+using DesktopUI2.Extensions;
 using DesktopUI2.Models;
 using DesktopUI2.Models.Filters;
 using DesktopUI2.Models.Settings;
@@ -27,9 +28,9 @@ using Timer = System.Timers.Timer;
 
 namespace SpeckleRhino
 {
-  public partial class ConnectorBindingsRhino : ConnectorBindings
+  public partial class ConnectorBindingsRhino : ConnectorBindings<RhinoDoc, string>
   {
-    public RhinoDoc Doc { get => RhinoDoc.ActiveDoc; }
+    public override RhinoDoc Doc { get => RhinoDoc.ActiveDoc; }
 
     public Timer SelectionTimer;
 
@@ -139,13 +140,15 @@ namespace SpeckleRhino
       var layers = Doc.Layers.ToList().Where(layer => !layer.IsDeleted).Select(layer => layer.FullPath).ToList();
       var projectInfo = new List<string> { "Named Views" };
 
-      return new List<ISelectionFilter>()
+      var filters =  new List<ISelectionFilter>()
       {
         new AllSelectionFilter { Slug="all", Name = "Everything", Icon = "CubeScan", Description = "Selects all document objects and project info." },
         new ListSelectionFilter {Slug="layer", Name = "Layers", Icon = "LayersTriple", Description = "Selects objects based on their layers.", Values = layers },
         new ListSelectionFilter {Slug="project-info", Name = "Project Information", Icon = "Information", Values = projectInfo, Description="Adds the selected project information as views to the stream"},
         new ManualSelectionFilter()
       };
+      filters.AddRange(base.GetSelectionFilters());
+      return filters;
     }
 
     public override List<ISetting> GetSettings()
@@ -721,7 +724,10 @@ namespace SpeckleRhino
     private List<string> GetObjectsFromFilter(ISelectionFilter filter)
     {
       var objs = new List<string>();
-
+      if (filter is IExternalSelectionFilter<RhinoDoc, string> externalFilter)
+      {
+        return externalFilter.Filter(Doc, null).ToList();
+      }
       switch (filter.Slug)
       {
         case "manual":
@@ -750,7 +756,6 @@ namespace SpeckleRhino
           //RaiseNotification("Filter type is not supported in this app. Why did the developer implement it in the first place?");
           break;
       }
-
       return objs;
     }
 

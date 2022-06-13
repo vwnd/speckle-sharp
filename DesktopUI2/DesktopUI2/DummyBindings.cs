@@ -1,4 +1,5 @@
-﻿using DesktopUI2.Models;
+﻿using DesktopUI2.Extensions;
+using DesktopUI2.Models;
 using DesktopUI2.Models.Filters;
 using DesktopUI2.Models.Settings;
 using DesktopUI2.ViewModels;
@@ -9,11 +10,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DesktopUI2
 {
-  public class DummyBindings : ConnectorBindings
+  public class DummyBindings : ConnectorBindings<object, string>
   {
     Random rnd = new Random();
 
@@ -84,9 +86,11 @@ namespace DesktopUI2
       return strs;
     }
 
+    public override object Doc { get; }
+
     public override List<ISelectionFilter> GetSelectionFilters()
     {
-      return new List<ISelectionFilter>
+      var filters =  new List<ISelectionFilter>
       {
         new AllSelectionFilter {Slug="all",  Name = "Everything", Icon = "CubeScan", Description = "Selects all document objects and project information." },
         new ManualSelectionFilter(),
@@ -101,8 +105,10 @@ namespace DesktopUI2
           Values = new List<string>() { "Family Name", "Height", "Random Parameter Name" },
           Operators = new List<string> {"equals", "contains", "is greater than", "is less than"}
         },
-
       };
+      var pluginFilters = base.GetSelectionFilters();
+      filters.AddRange(pluginFilters);
+      return filters;
     }
 
     public override List<ISetting> GetSettings()

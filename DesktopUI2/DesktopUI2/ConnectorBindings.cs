@@ -5,14 +5,34 @@ using DesktopUI2.ViewModels;
 using Sentry.Reflection;
 using Speckle.Core.Kits;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using DesktopUI2.Extensions;
 
 namespace DesktopUI2
 {
   public delegate void UpdateSavedStreams(List<StreamState> streams);
   public delegate void UpdateSelectedStream();
 
+  public abstract class ConnectorBindings<T,U> : ConnectorBindings
+  {
+    public abstract T Doc { get; }
+    
+    public override List<ISelectionFilter> GetSelectionFilters()
+    {
+      return new List<ISelectionFilter>(GetExternalSelectionFilters());
+    }
 
+    public IEnumerable<IExternalSelectionFilter<T,U>> GetExternalSelectionFilters()
+    {
+      return PluginManager.Plugins.SelectMany(plugin =>
+      {
+        if (plugin is IDesktopUIFilterPlugin filterPlugin)
+          return filterPlugin.AvailableFilters<T, U>();
+        return null;
+      });
+    }
+  }
   public abstract class ConnectorBindings
   {
     public ConnectorBindings() { }

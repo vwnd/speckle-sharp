@@ -1,7 +1,9 @@
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using DesktopUI2.Extensions;
 using DesktopUI2.ViewModels;
 using DesktopUI2.Views;
 using Material.Styles.Themes;
@@ -19,7 +21,7 @@ namespace DesktopUI2
     public override void Initialize()
     {
       AvaloniaXamlLoader.Load(this);
-      this.Name = "Speckle";
+      Name = "Speckle";
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -29,6 +31,8 @@ namespace DesktopUI2
       var themeBootstrap = this.LocateMaterialTheme<MaterialThemeBase>();
       themeBootstrap.CurrentTheme = theme;
 
+      var plugins = PluginManager.Plugins.ToList();
+      
       if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
       {
         desktop.MainWindow = new MainWindow
