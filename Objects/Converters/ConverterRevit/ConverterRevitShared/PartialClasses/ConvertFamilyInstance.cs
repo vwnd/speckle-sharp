@@ -920,6 +920,12 @@ public partial class ConverterRevit
       }
     }
 
+    // Add symbol to cache.
+    if (!Symbols.ContainsKey(instance.GetTypeId().ToString()))
+    {
+      Symbols.Add(instance.GetTypeId().ToString(), symbol);
+    }
+
     return symbol;
   }
   #endregion
