@@ -856,10 +856,9 @@ public partial class ConverterRevit
     notes = new List<string>();
 
     // Checks cached and return early.
-    if (Symbols.ContainsKey(instance.GetTypeId().ToString()))
+    RevitSymbolElementType cachedSymbol;
+    if (Symbols.TryGetValue(instance.GetTypeId().ToString(), out cachedSymbol))
     {
-      RevitSymbolElementType cachedSymbol;
-      Symbols.TryGetValue(instance.GetTypeId().ToString(), out cachedSymbol);
       return cachedSymbol;
     }
 
