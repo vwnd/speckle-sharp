@@ -854,6 +854,15 @@ public partial class ConverterRevit
   )
   {
     notes = new List<string>();
+
+    // Checks cached and return early.
+    if (Symbols.ContainsKey(instance.GetTypeId().ToString()))
+    {
+      RevitSymbolElementType cachedSymbol;
+      Symbols.TryGetValue(instance.GetTypeId().ToString(), out cachedSymbol);
+      return cachedSymbol;
+    }
+
     var symbol =
       ElementTypeToSpeckle(instance.Document.GetElement(instance.GetTypeId()) as ElementType) as RevitSymbolElementType;
     if (symbol == null)
